@@ -1,0 +1,11 @@
+#!/usr/bin/env python2
+# coding:utf-8
+
+import sys
+import time
+
+if len(sys.argv) > 1 and sys.argv[1] == '--version':
+	print('git version 2.10.2')
+	sys.exit(0)
+sys.stderr.write(str(sys.argv) + '\n')
+time.sleep(30)

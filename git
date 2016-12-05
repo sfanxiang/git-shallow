@@ -6,8 +6,34 @@ gitorig = 'gitorig'
 import os
 import sys
 
-if len(sys.argv) >= 2:
-	if sys.argv[1] in ['clone', 'fetch', 'pull']:
-		sys.exit(os.system(gitorig + ' ' + sys.argv[1] + ' --depth=1 ' + ' '.join(sys.argv[2:])))
+def escape_args(arg):
+	ret = '"'
+	for i in arg:
+		if i in ['"', '\\']:
+			ret += '\\'
+		ret += i
+	ret += '"'
+	return ret
 
+def update_command(argv):
+	i = 1
+	found = False
+	while i < len(argv):
+		if not found and (argv[i].startswith('-C') or argv[i].startswith('-c')):
+			argv[i] = escape_args(argv[i])
+			i += 1
+			argv[i] = escape_args(argv[i])
+		elif not found:
+			argv[i] = argv[i].rstrip(' ').lstrip(' ')
+			found = True
+			if argv[i] in ['clone', 'fetch', 'pull']:
+				argv[i] = escape_args(argv[i])
+				argv[i] += ' --depth=1'
+			else:
+				argv[i] = escape_args(argv[i])
+		else:
+			argv[i] = escape_args(argv[i])
+		i += 1
+
+update_command(sys.argv)
 sys.exit(os.system(gitorig + ' ' + ' '.join(sys.argv[1:])))
